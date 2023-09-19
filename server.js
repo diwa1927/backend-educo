@@ -18,13 +18,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require('./app/models');
-const Role = db.role;
-const Assignment = db.assignment;
-//db.sequelize.sync();
-db.sequelize.sync({ force: true }).then(() => {
+//const Role = db.role;
+//const Assignment = db.assignment;
+db.sequelize.sync();
+/*db.sequelize.sync({ force: true }).then(() => {
     console.log("Drop and re-sync db with { force: true }.");
     initial();
-});
+});*/
 
 app.get('/', (req,res) => {
     res.json({ message: "Welcome to Database Educo, database is connected!"})
@@ -66,7 +66,7 @@ app.listen(PORT, () => {
     console.log(` Server listening on port ${PORT} `);
 });
 
-function initial(){
+/*function initial(){
     Role.create({
         id: 1,
         name: "siswa"
@@ -106,4 +106,4 @@ function initial(){
         id: 5,
         name: "Array"
     });
-}
+}*/
