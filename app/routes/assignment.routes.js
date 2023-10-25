@@ -35,7 +35,7 @@ module.exports = function(app) {
         const getRows = await googleSheets.spreadsheets.values.get({
             auth,
             spreadsheetId,
-            range: "Assignments!A:E",
+            range: "Assignments!A2:E",
         });
         
         res.send(getRows.data);
