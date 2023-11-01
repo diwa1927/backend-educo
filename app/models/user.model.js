@@ -14,5 +14,12 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
+    // Tambahkan asosiasi dengan model Code
+    User.associate = (models) => {
+        User.hasMany(models.Code, {
+        foreignKey: 'userId',
+        });
+    };
+
     return User;
 };
