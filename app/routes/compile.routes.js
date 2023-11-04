@@ -49,4 +49,55 @@ module.exports = function(app) {
             res.status(500).json({ error: 'Failed to fetch Codes'});
         }
     });
+    app.get("/api/codes/:id", async(req, res) => {
+        try {
+            const codeId = req.params.id;
+            const code = await Code.findByPk(codeId);
+            if(!code){
+                res.status(404).json({ error: "Code not found."});
+            } else {
+                res.json(code);
+            }
+        } catch (error) {
+            console.error('Failed to fetch Code data', error);
+            res.status(500).json({error: 'Failed to fetch data.'});
+        }
+    });
+    app.put('/api/codes/:id', async (req, res) => {
+        const codeId = req.params.id;
+        const updateCode = req.body;
+        try {
+            const code = await Code.findByPk(codeId);
+    
+            if (!code) {
+                res.status(404).json({ error: 'Code not found.'})
+            }
+    
+            // Update data
+            await code.update(updateCode);
+            // Kirim respons berhasil
+            res.status(200).json({ message: 'Code updated successfully.'}); 
+        } catch (error) {
+            console.error('Error updating code:', error);
+            res.status(500).json({ error: 'Failed to update.'});
+        }
+    });
+    
+    app.delete('/api/codes/:id', async(req, res) => {
+        const codeId = req.params.id;
+
+        try {
+            const code = await Code.findByPk(codeId);
+
+            if (!code) {
+                res.status(404).json({ error: "Code not found."});
+            } else {
+                await code.destroy(); //menghapus data dari database
+                res.status(200).json({ message: "Code delete successfully."});
+            }
+        } catch (error) {
+            console.error('Failed to delete file:', error);
+            res.status(500).json({ error: "Failed to delete code."});
+        }
+    });
 };
