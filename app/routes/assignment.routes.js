@@ -3,12 +3,13 @@ module.exports = function(app) {
     const axios = require("axios");
     const json2xls = require('json2xls');
 
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes: "https://www.googleapis.com/auth/spreadsheets",
+    });
+
     app.get("/api/getassignments", async(req, res) => {
         try {
-            const auth = new google.auth.GoogleAuth({
-                keyFile: "credentials.json",
-                scopes: "https://www.googleapis.com/auth/spreadsheets",
-            });
             
             //Create client instance for Auth
             const client = await auth.getClient();
@@ -57,5 +58,38 @@ module.exports = function(app) {
         res.setHeader('Content-Disposition', 'attachment; filename=data_assignments.xlsx');
         res.end(xls, 'binary');
         console.log('Data yang di download :', response.data);
+    });
+
+    app.delete("/api/delete-assignments/:rowId", async(req, res) => {
+
+        const client = await auth.getClient();
+        const sheets = google.sheets({ version: 'v4', auth: client});
+        const spreadsheetId = "1c2JDLDsqw27Bwc754dqT3DHQtmM7jgbDM1Wl67LKSRg";
+        const rowId = req.params.rowId;
+
+        // Pastikan bahwa rowId memiliki nilai yang sesuai
+        if (!rowId) {
+            return res.status(400).json({ error: "Invalid rowId" });
+        }
+
+        const range = `Assignments!A${rowId}:E${rowId}`;
+
+        try {
+            const response = await sheets.spreadsheets.values.clear({
+                spreadsheetId,
+                range,
+            });
+
+            // Periksa keberhasilan operasi penghapusan
+            if (response.status === 200) {
+                res.status(200).json({ message: 'Data deleted successfully' });
+            } else {
+                res.status(500).json({ error: 'Failed to delete data' });
+            }
+        } catch (error) {
+            console.error('Failed to delete data:', error);
+            res.status(500).json({ error: 'Failed to delete data' });
+        }
+
     });
 };

@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 const db = require('./app/models');
 const Role = db.role;
-// db.sequelize.sync();
+db.sequelize.sync();
 // db.sequelize.sync({ force: true }).then(() => {
 //     console.log("Drop and re-sync db with { force: true }.");
 //     initial();
@@ -33,6 +33,7 @@ app.get('/', (req,res) => {
 
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/role.routes')(app);
 require('./app/routes/assignment.routes')(app);
 require('./app/routes/compile.routes')(app);
 
