@@ -21,11 +21,11 @@ app.use(bodyParser.json());
 
 const db = require('./app/models');
 const Role = db.role;
-// db.sequelize.sync();
-db.sequelize.sync({ force: true }).then(() => {
-    console.log("Drop and re-sync db with { force: true }.");
-    initial();
-});
+db.sequelize.sync();
+// db.sequelize.sync({ force: true }).then(() => {
+//     console.log("Drop and re-sync db with { force: true }.");
+//     initial();
+// });
 
 app.get('/', (req,res) => {
     res.json({ message: "Welcome to Database Educo, database is connected!"})
