@@ -1,3 +1,3 @@
 module.exports = {
-    secret: "educo-secret-key"
+    secret: process.env.SECRET_KEY
 }

@@ -1,25 +1,38 @@
-module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define("users", {
-        username: {
-            type: Sequelize.STRING
-        },
-        email: {
-            type: Sequelize.STRING
-        },
-        password: {
-            type: Sequelize.STRING
-        },
-        class: {
-            type: Sequelize.STRING
-        }
-    });
+// models/User.js
 
-    // Tambahkan asosiasi dengan model Code
-    User.associate = (models) => {
-        User.hasMany(models.Code, {
-        foreignKey: 'userId',
-        });
-    };
+const { DataTypes } = require("sequelize");
+const db = require("../config/sequelizeDbInstance");
+const Role = require("./role.model");
+const Code = require("./code.model");
 
-    return User;
-};
+const User = db.define("users", {
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+  },
+  class: {
+    type: DataTypes.STRING,
+  },
+  roleId: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+  },
+});
+
+User.hasMany(Code, {
+  onDelete: "CASCADE",
+});
+Code.belongsTo(User);
+
+User.belongsTo(Role, { foreignKey: "roleId" });
+
+module.exports = User;
