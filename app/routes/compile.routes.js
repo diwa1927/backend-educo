@@ -3,7 +3,7 @@ const db = require("../models");
 const Code = db.code;
 
 module.exports = function(app) {
-    app.post("/compile", async (req, res) => {
+    app.post("/api/compile", async (req, res) => {
         let code = req.body.code;
         let userInput = req.body.userInput;
         let data = {
@@ -30,7 +30,7 @@ module.exports = function(app) {
             return res.status(500).json({ error: "Internal Server Error" });
         });
     });
-    app.post("/save-compile", async (req, res) => {
+    app.post("/api/save-compile", async (req, res) => {
         try {
             const { name, userCode, userInput } = req.body;
             const savedCode = await Code.create({ name, userCode, userInput });
