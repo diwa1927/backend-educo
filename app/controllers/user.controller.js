@@ -1,23 +1,19 @@
+const Role = require("../models/role.model");
 const User = require("../models/user.model");
 
 exports.getUserById = async (req, res) => {
   const userId = req.params.id;
   try {
-    const user = await User.findByPk(userId, {
-    });
+    const user = await User.findByPk(userId, { include: Role });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const { username, email, id, createdAt, updatedAt, roleId } = user.toJSON();
+    const foundUser = user.toJSON();
+    delete foundUser.password;
     res.status(200).json({
       message: "Success Get User by ID",
       user: {
-        username,
-        email,
-        id,
-        createdAt,
-        updatedAt,
-        roleId,
+        ...foundUser,
       },
     });
   } catch (error) {

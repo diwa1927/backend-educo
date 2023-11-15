@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model.js");
 
-verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   //   const token = req.header("Authorization");
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -15,6 +15,29 @@ verifyToken = (req, res, next) => {
     }
     delete user.password;
     req.user = user;
+    next();
+  });
+};
+
+// Middleware to decode JWT and attach user ID to request object
+const decodeJwtMiddleware = (req, res, next) => {
+  const authorizationHeader = req.headers["authorization"];
+
+  if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: Bearer token is required" });
+  }
+
+  const token = authorizationHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    // Attach decoded user ID to request object
+    req.userId = decoded.id;
     next();
   });
 };
@@ -81,5 +104,6 @@ const authJwt = {
   isAdmin: isAdmin,
   isGuru: isGuru,
   isGuruOrAdmin: isGuruOrAdmin,
+  decodeJwtMiddleware,
 };
 module.exports = authJwt;

@@ -18,6 +18,9 @@ const Code = db.define("codes", {
   userInput: {
     type: DataTypes.TEXT, // Menggunakan TEXT untuk input yang lebih panjang
   },
+  userId: {
+    type: DataTypes.INTEGER, // Menggunakan TEXT untuk input yang lebih panjang
+  },
 });
 
 module.exports = Code;

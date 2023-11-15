@@ -51,17 +51,14 @@ exports.signin = async (req, res) => {
       allowInsecureKeySizes: true,
       expiresIn: 86400, // 24 hours
     });
-    const { username, email, id, createdAt, updatedAt, roleId } = user.toJSON();
+    const foundUser = user.toJSON();
+    delete foundUser.password;
     res.status(200).send({
-      username,
-      email,
-      id,
-      createdAt,
-      updatedAt,
-      roleId,
+      ...foundUser,
       accessToken: token,
     });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    console.log(error);
+    res.status(500).json({ error: error, message: "Internal Server Error" });
   }
 };

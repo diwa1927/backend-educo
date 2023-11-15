@@ -33,8 +33,14 @@ exports.codeCompile = async (req, res) => {
 
 exports.saveCompile = async (req, res) => {
   try {
+    const userId = req.userId;
     const { name, userCode, userInput } = req.body;
-    const savedCode = await Code.create({ name, userCode, userInput });
+    const savedCode = await Code.create({
+      name,
+      userCode,
+      userInput,
+      userId: userId,
+    });
     res.json(savedCode);
   } catch (error) {
     console.error(error);
@@ -42,9 +48,14 @@ exports.saveCompile = async (req, res) => {
   }
 };
 
-exports.getAllCodes = async (_, res) => {
+exports.getAllCodes = async (req, res) => {
   try {
-    const codes = await Code.findAll();
+    const userId = req.userId;
+    const codes = await Code.findAll({
+      where: {
+        userId,
+      },
+    });
     res.json(codes);
   } catch (error) {
     console.error("Failed to fetch data Code :", error);
@@ -89,7 +100,6 @@ exports.deleteCodeById = async (req, res) => {
   const codeId = req.params.id;
   try {
     const code = await Code.findByPk(codeId);
-
     if (!code) {
       res.status(404).json({ error: "Code not found." });
     } else {
