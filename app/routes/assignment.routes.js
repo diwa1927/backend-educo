@@ -44,21 +44,6 @@ module.exports = function (app) {
       res.status(500).json({ message: "Internal server error" });
     }
   });
-  app.get("/download", async (_, res) => {
-    const response = await axios.get(
-      "http://localhost:8080/api/getassignments"
-    );
-
-    // Convert JSON data to XLSX and send it as a response
-    const xls = json2xls(response.data);
-    res.setHeader("Content-Type", "application/vnd.openxmlformats");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=data_assignments.xlsx"
-    );
-    res.end(xls, "binary");
-    console.log("Data yang di download :", response.data);
-  });
 
   app.delete("/api/delete-assignments/:rowId", async (req, res) => {
     const client = await auth.getClient();
