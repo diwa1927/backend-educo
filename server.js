@@ -30,7 +30,7 @@ app.get("/", (_, res) => {
 });
 
 // Sync the models with the database
-sequelize.sync().then(() => {
+sequelize.sync({ force: true }).then(() => {
   console.log("Database and tables created!");
 });
 
