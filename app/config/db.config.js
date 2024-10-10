@@ -1,4 +1,5 @@
 const dotenv = require("dotenv"); // Load environment variables from a .env file
+const { ssl } = require("pg/lib/defaults");
 dotenv.config();
 
 const config = {

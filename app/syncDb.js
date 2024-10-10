@@ -5,4 +5,4 @@ const syncDb = async () => {
   });
 };
 
-syncDb();
+// syncDb();
