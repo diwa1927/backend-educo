@@ -25,11 +25,11 @@ module.exports = function (app) {
 
       // Get the array of objects from the Excel file
       const dataArray = excelToJson(filePath);
-    
+
       const formatData = dataArray?.map((item) => {
         return {
           Score: item.Score,
-          Nama: item.Nama,
+          Nama: item['Nama '],
           Kelas: item.Kelas,
           Absen: item["No. Absen"],
           Assignments: item["Assignment's"],
