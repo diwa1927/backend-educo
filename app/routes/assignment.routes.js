@@ -1,39 +1,38 @@
 module.exports = function (app) {
   const { google } = require("googleapis");
-  const axios = require("axios");
-  const json2xls = require("json2xls");
-
-  const auth = new google.auth.GoogleAuth({
-    keyFile: "credentials.json",
-    scopes: "https://www.googleapis.com/auth/spreadsheets",
-  });
+  const fs = require("fs");
+  const path = require("path");
+  const XLSX = require("xlsx");
 
   app.get("/api/getassignments", async (_, res) => {
     try {
-      //Create client instance for Auth
-      const client = await auth.getClient();
+      // Path to the uploaded file
+      const filePath = path.resolve(__dirname, "../../assignment-educo.xlsx");
 
-      //Instance of Google Sheets API
-      const googleSheets = google.sheets({ version: "v4", auth: client });
+      // Function to convert Excel file to an array of objects
+      function excelToJson(filePath) {
+        // Read the file
+        const fileBuffer = fs.readFileSync(filePath);
+        // Parse the Excel file
+        const workbook = XLSX.read(fileBuffer, { type: "buffer" });
+        // Assuming the data is in the first sheet
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        // Convert the sheet to JSON
+        const data = XLSX.utils.sheet_to_json(sheet);
+        return data;
+      }
 
-      const spreadsheetId = "1c2JDLDsqw27Bwc754dqT3DHQtmM7jgbDM1Wl67LKSRg";
-
-      //Get rows about spreadsheets
-      const getRows = await googleSheets.spreadsheets.values.get({
-        auth,
-        spreadsheetId,
-        range: "Assignments!A2:E",
-      });
-
-      const dataFromSheets = getRows.data.values;
-
-      const formatData = dataFromSheets.map((row) => {
+      // Get the array of objects from the Excel file
+      const dataArray = excelToJson(filePath);
+    
+      const formatData = dataArray?.map((item) => {
         return {
-          Score: row[0], // Kolom A (indeks 0) dari rentang A1:E
-          Nama: row[1], // Kolom B (indeks 1) dari rentang A1:E
-          Kelas: row[2], // Kolom C (indeks 2) dari rentang A1:E
-          Absen: parseInt(row[3]), // Kolom D (indeks 3) dari rentang A1:E
-          Assignments: row[4], // Kolom E (indeks 4) dari rentang A1:E
+          Score: item.Score,
+          Nama: item.Nama,
+          Kelas: item.Kelas,
+          Absen: item["No. Absen"],
+          Assignments: item["Assignment's"],
         };
       });
 
